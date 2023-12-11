@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+  <link href="//unpkg.com/layui@2.9.0/dist/css/layui.css" rel="stylesheet" />
+  <style>
+    img {
+      width: 50px;
+      height: 50px;
+    }
+    table {
+      width: 700px;
+      text-align: center;
+      border-collapse: collapse;
+      margin: auto;
+    }
+    th {
+      width: 50px;
+      height: 40px;
+    }
+    tr td {
+      width: 50px;
+      height: 20px;
+    }
+    td:last-child {
+      width: 200px;
+    }
+    input {
+      width: 200px;
+      height: 30px;
+    }
+    #tab {
+      margin-top: -330px;
+    }
+  </style>
+  <body>
+    <div class="box">
+      <button class="layui-btn layui-btn-primary layui-border-red" id="addbtn">
+        添加
+      </button>
+      <br />
+      <br />
+      <div id="addbox">
+        编号：
+        <input type="text" placeholder="请输入" id="addid" /><br /><br />
+        车名：
+        <input type="text" placeholder="请输入" id="addname" /><br /><br />
+        图片：
+        <input type="text" placeholder="请输入" id="addimg" /><br /><br />
+        颜色：
+        <input type="text" placeholder="请输入" id="addcolor" /><br /><br />
+        类型：
+        <input type="text" placeholder="请输入" id="addmodel" /><br /><br />
+        日期：
+        <input type="text" placeholder="请输入" id="adddate" />
+      </div>
+      <div id="tab">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>编号</th>
+              <th>车名</th>
+              <th>图片</th>
+              <th>颜色</th>
+              <th>类型</th>
+              <th>时间</th>
+              <th>管理</th>
+            </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <script>
+      $(function () {
+        renderFun();
+        $("tbody").click(tobdyFun);
+        $("#addbtn").click(addFun);
+      });
+      let id;
+      function addFun() {
+        let data = {
+          id: $("#addid").val(),
+          brand: $("#addname").val(),
+          thumbnail: $("#addimg").val(),
+          color: $("#addcolor").val(),
+          model: $("#addmodel").val(),
+          year: $("#adddate").val(),
+        };
+        console.log(data);
+        $.ajax({
+          url: "http://localhost:3000/api/add",
+          type: "post",
+          data: data,
+          success: function (res) {
+            console.log(res);
+            renderFun();
+          },
+        });
+      }
+      function tobdyFun() {
+        if (event.target.tagName == "BUTTON") {
+          if (event.target.innerHTML == "删除") {
+            id = event.target.dataset.id;
+            console.log(id);
+            $.ajax({
+              url: `http://localhost:3000/api/del?id=${id}`,
+              type: "get",
+              success: function (res) {
+                renderFun();
+              },
+            });
+          }
+        }
+      }
+      function renderFun() {
+        $.ajax({
+          url: "http://localhost:3000/api/user/", // dataType: "json",
+          type: "GET",
+          success: function (res) {
+            var html = "";
+            res.list.forEach(function (item, index) {
+              html += `
+                        <tr>
+                      <td>${item.id}</td>
+                      <td>${item.brand}</td>
+                      <td><img src="${item.thumbnail}" alt=""></td>
+                      <td>${item.color}</td>
+                      <td>${item.model}</td>
+                      <td>${item.year}</td>
+                      <td><button class="layui-btn layui-btn-primary layui-border-purple" data-id=${item.id}>删除</button>  <button class="layui-btn layui-btn-primary layui-border-blue">查看</button>
+            <button class="layui-btn layui-btn-primary layui-border-orange">修改</button></td>
+                        </tr>
+                      `;
+            });
+
+            $("tbody").html(html);
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
