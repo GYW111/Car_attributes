@@ -1,4 +1,3 @@
-// const { log } = require('console');
 const fs = require('fs');
 // const http = require('http');
 const path = require("path");
@@ -11,7 +10,6 @@ const getCarList = (req, res) => {
         }else{
             res.end(data)
         }
-        
     });
 };
 //删除
@@ -60,6 +58,19 @@ const deleCar = (req, res) => {
           }
         });
   }
+  const detailsCar =(req,res)=>{
+    const id = req.url.split('?')[1].split('=')[1];
+    console.log(id);
+    let datadetail =JSON.parse(carList()) 
+    let index = datadetail.list.find((item) => item.id == id)
+    if (index === -1) {
+        res.statusCode = 200;
+        res.end(JSON.stringify({ msg: "未找到数据" }));
+        return;
+      }
+      res.statusCode=200
+      res.end(JSON.stringify(index))
+  }
   function carList() {
    let data = fs.readFileSync(path.join(__dirname,"datacar", 'data.json'), 'utf-8')
     return data;
@@ -68,4 +79,5 @@ module.exports = {
     getCarList,
     deleCar,
     addCar,
+    detailsCar,
 };
