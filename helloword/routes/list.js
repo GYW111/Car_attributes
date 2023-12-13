@@ -7,5 +7,5 @@ router.get('/car', userController.getCarList);
 router.get('/del', userController.deleCar);
 router.post('/add', userController.addCar);
 router.get('/details', userController.detailsCar);
-
+router.put('/modify', userController.modifyCar);
 module.exports = router;
